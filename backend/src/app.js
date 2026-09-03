@@ -4,15 +4,22 @@ import cors from "cors"
 import { createServer } from "node:http"
 import { Server } from "socket.io"
 import dns from "node:dns"
+import { connectToSocketServer } from "./controllers/socketmanager.js"
 
 dns.setServers(["8.8.8.8", "8.8.4.4"])
 
 const app = express()
 
 const httpServer = createServer(app)
-const io = new Server(httpServer)
+const io = connectToSocketServer(httpServer)
+
 
 app.set("port", process.env.PORT || 7000)
+
+app.use(cors())
+app.use(express.json({limit:"50kb"}))
+app.use(express.urlencoded({extended:true,limit:"50kb"}))
+
 
 app.get("/home", (req, res) => {
   return res.json({ hello: "hello" })
