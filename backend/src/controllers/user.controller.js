@@ -13,7 +13,7 @@ const login = async (req,res)=>{
         return res.status(400).json({message:"please provide"})
     }
 try {
-    const user = await User.find({username});
+    const user = await User.findOne({username});
 
     if(!user){
         return res.status(httpStatus.NOT_FOUND).json({message:"user Not found"})
@@ -24,7 +24,7 @@ try {
 
         user.token = token;
         await user.save();  
-        return res.status(httpStatus.OK).json({message:"login success",token:token})
+        return res.status(httpStatus.OK).json({ token:token })
 
     
 } 
@@ -43,7 +43,7 @@ const register = async(req,res) => {
         const userExit = await User.findOne({username})
 
         if(userExit){
-            return res.status(httpStatus.FOUND).json({message:"user is found"})
+            return res.status(httpStatus.FOUND).json({message:"user already  exit"})
         }
 
         const hashedpass = await bcrypt.hash(password,10);
