@@ -5,7 +5,15 @@ let messages = {}
 let timeOnline = {}
 
 export const connectToSocketServer = (httpServer) => {
-  const io = new Server(httpServer)
+  const io = new Server(httpServer,{
+
+    cors:{
+      origin:"*",
+      methods:["GET","POST"],
+      allowedHeaders:["*"],
+      credentials:true
+    }
+  })
 
   io.on("connection", (socket) => {
     socket.on("join-call", (path) => {
