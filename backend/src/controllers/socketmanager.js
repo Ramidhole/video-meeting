@@ -64,5 +64,29 @@ export const connectToSocketServer = (httpServer) => {
         })
       }
     })
+
+    socket.on("disconnect", () => {
+      // Handle disconnection logic here
+      var diffTime = Math.abs(timeOnline[socket.id] - new Date())
+      var key
+
+      for (const [k, v] of JSON.parse(JSON.stringify(Object.entries(connections)))) {
+        for (let a = 0; a < v.length; a++) {
+          if (v[a] === socket.id) {
+            key = k
+
+            for (let a = 0; a < connections[key].length; a++) {
+              io.to(connections[key][a]).emit("user-left", socket.id)
+            }
+            var index = connections[key].indexOf(socket.id)
+            connections[key].splice(index, 1)
+
+            if (connections[key].length === 0) {
+              delete connections[key]
+            }
+          }
+        }
+      }
+    })
   })
 }
